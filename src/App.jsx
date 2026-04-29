@@ -8,6 +8,7 @@ import Orders from './pages/Orders';
 import Users from './pages/Users';
 import Categories from './pages/Categories';
 import Reviews from './pages/Reviews';
+import Ratings from './pages/Ratings';
 import Settings from './pages/Settings';
 import api from './services/api';
 
@@ -18,6 +19,7 @@ const navItems = [
   { to: '/orders', label: 'Orders' },
   { to: '/users', label: 'Users' },
   { to: '/reviews', label: 'Reviews' },
+  { to: '/ratings', label: 'Ratings' },
   { to: '/settings', label: 'Settings' }
 ];
 
@@ -80,6 +82,15 @@ function AdminLayout({ children }) {
       setAdmin(data);
     } catch (err) {
       setLoginError(err.response?.data?.message || 'Login failed');
+    }
+  };
+
+  const forgotPassword = async () => {
+    try {
+      await api.post('/auth/forgot-password', { email: loginForm.email });
+      alert('If account exists, reset link printed to server console (demo).');
+    } catch (err) {
+      alert('Unable to request reset: ' + (err.response?.data?.message || err.message));
     }
   };
 
@@ -146,7 +157,10 @@ function AdminLayout({ children }) {
               onChange={(e) => setLoginForm((prev) => ({ ...prev, password: e.target.value }))}
               placeholder="Password"
             />
-            <button type="submit">Login</button>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button type="submit">Login</button>
+                  <button type="button" onClick={forgotPassword} className="muted">Forgot password?</button>
+                </div>
             {loginError && <p className="danger" style={{ margin: 0 }}>{loginError}</p>}
           </form>
         )}
@@ -195,6 +209,7 @@ export default function App() {
         <Route path="orders" element={<Orders />} />
         <Route path="users" element={<Users />} />
         <Route path="reviews" element={<Reviews />} />
+        <Route path="ratings" element={<Ratings />} />
         <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
